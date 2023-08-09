@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>인덱스</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3.5.1/dist/vue-router.js"></script>
+
+</head>
+<body>
+    <h1>주식예측</h1>
+    <form action="/main" method="post">
+    <div id = "app">
+        <input type = 'text' name="id" id ='id' v-model="id">
+        <input type = 'password' name="pwd" id ='pwd' v-model="pwd">
+        <button type="submit" @click="login(id,pwd)">로그인</button>
+        <br>
+        <p>아이디 : <%id%></p>
+        <br>
+        <p>비번 : <%pwd%></p>
+    </div>
+     </form>
+<script>
+    new Vue({
+        el : '#app',
+        delimiters: ["<%","%>"],
+        data(){
+            return{
+                id : '',
+                pwd : '',
+            }
+        },
+        methods :{
+            login(id,pwd){
+
+            }
+        }
+    })
+</script>
+
+</body>
+
+</html>

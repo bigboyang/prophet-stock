@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3.5.1/dist/vue-router.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+</head>
+<body>
+{{ user }}
+
+<div id="app">
+    <input type="text" name="stock" id="stock" v-model="stock" placeholder="주식이름입력">
+    <input type="text" name="date" id="date" v-model="date" placeholder="날짜입력">
+    <input type="number" name="num" id="num" value="365" v-model="num" placeholder="날짜입력">
+    <input type="button" @click="search(stock,date,num)" value="검색">
+    <h1><%stockName%> 예측그래프</h1>
+    <div id = 'chartDiv'>
+      <canvas id="myChart">
+
+      </canvas>
+    </div>
+</div>
+
+
+<script>
+
+    new Vue({
+        el : '#app',
+        delimiters: ["<%","%>"],
+        data(){
+            return{
+                stock : '',
+                date : '',
+                num : 0,
+                stockName : '',
+                result : {
+                    ds : [],
+                    y : [],
+                },
+                forRecord : '',
+                myChart : null,
+
+            }
+        },
+        methods:{
+            search(stock,date,num){
+                {#변수 초기화#}
+                this.result.ds = []
+                this.result.y = []
+                if (this.myChart != null){
+                    this.myChart.destroy()
+                }
+
+                this.stockName = stock
+                this.forRecord = date
+                {#주식 검색 날짜를 기록 #}
+                fetch('http://127.0.0.1:5000/search?stock='+stock+"&date="+date +"&num="+num)
+                .then((res)=>{
+                    return res.json()
+                }).then((answer) =>{
+                    console.log(answer),
+                    this.result.ds = answer['ds'],
+                    this.result.y = answer['y']
+                    return answer
+                }).then((answer) => {
+
+                    const labels = answer['ds'];
+                    const data = {
+                    labels: labels,
+                datasets: [{
+                  label: this.stockName,
+                  backgroundColor: 'rgb(255, 99, 132)',
+                  borderColor: 'rgb(255, 99, 132)',
+                  data: answer['y'],
+                }]
+                };
+
+                const config = {
+                type: 'line',
+                data: data,
+                options: {}
+                };
+
+                this.myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+                );
+
+                })
+                .catch((cat)=>{
+                    console.log(cat)
+                    alert('잘못된 주식 이름입니다')
+                })
+            }
+        }
+    })
+
+</script>
+
+<script>
+
+
+</script>
+<script>
+
+</script>
+</body>
+</html>
